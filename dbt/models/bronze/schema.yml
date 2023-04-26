@@ -1,0 +1,8 @@
+
+version: 2
+
+models:
+  - name: nhl_games
+    description: "Information about nhl games including live feed data."
+
+

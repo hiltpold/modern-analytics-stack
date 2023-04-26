@@ -1,0 +1,16 @@
+
+version: 2
+
+models:
+  - name: nhl_plays
+    description: "Information about nhl play by play data from nhl games"
+
+    columns:
+      - name: game_pk
+        description: "This is a unique identifier for a game."
+      - name: game_date
+        description: "The date the game took place."
+      - name: plays
+        description: "All plays that happend in this game."
+
+

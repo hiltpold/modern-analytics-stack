@@ -1,0 +1,6 @@
+data
+.venv
+.DS_Store
+duckdb
+logs
+target

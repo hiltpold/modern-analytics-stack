@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: nhl_data
+    tables:
+      - name: nhl_games
+        meta:
+          external_location: "read_json_objects('../data/bronze/nhl/games/*/result.json')"

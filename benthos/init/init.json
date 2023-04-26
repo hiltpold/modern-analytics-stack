@@ -1,0 +1,5 @@
+{
+    "season": [ 20172018, 20182019 ],
+    "regular_season_url": "https://statsapi.web.nhl.com/api/v1/schedule?gameType=R&season=",
+    "base_url": "https://statsapi.web.nhl.com"
+}

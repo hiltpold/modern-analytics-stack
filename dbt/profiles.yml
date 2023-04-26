@@ -1,0 +1,9 @@
+nhl_stats_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: '../duckdb/nhl_stats_analytics.duckdb'
+      extensions:
+        - json
+        - parquet

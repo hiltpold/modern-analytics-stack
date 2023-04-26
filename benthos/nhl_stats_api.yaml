@@ -1,0 +1,77 @@
+input:
+  file:
+    paths: [./benthos/init/init.json]
+    codec: all-bytes
+pipeline:
+  processors:
+    - label: parse_config
+      mapping: |
+        root = this.season
+        meta base_url = this.base_url
+        meta regular_season_url = this.regular_season_url
+    - label: season_messages
+      unarchive:
+        format: json_array
+    - label: season_message
+      mapping: |
+        root.season = this
+    - label: handle_seasons
+      branch:
+        request_map: |
+          meta query_params = this.season
+        processors:
+          - label: fetch_season_data
+            http:
+              url: ${! meta("regular_season_url")}${! meta("query_params")}
+              verb: GET
+          - label: expand_games
+            mapping: |
+              root = this
+        result_map: |
+          root = this.explode("dates")    
+    - label: daily_games
+      unarchive:
+        format: json_array
+    - label: explode_games 
+      mapping: |
+        root = this.explode("dates.games")
+    - label: split_games
+      unarchive:
+        format: json_array
+    - label: format_games 
+      mapping: |
+        root = this.dates.games
+        root.totalItems = this.totalItems
+        root.totalEvents = this.totalEvents
+        root.totalGames = this.totalGames
+        root.totalMatches = this.totalMatches
+        root.date = this.dates.date
+    - group_by_value:
+        value: ${! json("gamePK") }
+    - label: handle_game_data
+      branch:
+        request_map: |
+          root = ""
+          meta link = this.link
+        processors:
+          - label: fetch_game_data
+            http:
+              url: ${! meta("base_url")}${! meta("link")}
+              verb: GET
+              parallel: true
+              rate_limit: nhl_api_limit
+        result_map: |
+          root.gameData = this.gameData
+          root.liveData = this.liveData
+          root.content = deleted()
+output:
+  file:
+    path: ./data/bronze/nhl/games/${! json("gamePk") }/result.json
+    codec: lines	
+
+# Resources
+rate_limit_resources:
+  - label: nhl_api_limit
+    local:
+      count: 100
+      interval: 1s

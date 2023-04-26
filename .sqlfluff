@@ -1,0 +1,4 @@
+
+[sqlfluff]
+templater=dbt
+load_macros_from_path=macros
