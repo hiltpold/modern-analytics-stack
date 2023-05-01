@@ -2,5 +2,6 @@ data
 .venv
 .DS_Store
 duckdb
+*.duckdb
 logs
 target
